@@ -9,7 +9,7 @@ concurrency:
 jobs:
   coverage:
     name: Test & Coverage
-    runs-on: warp-ubuntu-latest-x64-4x
+    runs-on: ubicloud-gpu
     timeout-minutes: 30
     env:
       GODOT4_BIN: ${{ github.workspace }}/.bin/godot/godot4_bin
