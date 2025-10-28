@@ -1,5 +1,5 @@
 name: Set up cache
-description: Set up cache
+description: Set up cache with WarpBuild optimized caching
 inputs:
   cache-name:
     description: The cache base name (job name by default).
@@ -8,8 +8,25 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: Swatinem/rust-cache@v2
+    - name: WarpCache - Cargo Registry
+      uses: WarpBuilds/cache@v1.4.6
       with:
-        workspaces: |
-          .
-          lib/
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+
+    - name: WarpCache - Rust Build
+      uses: WarpBuilds/cache@v1.4.6
+      with:
+        path: |
+          target/
+          lib/target/
+        key: ${{ runner.os }}-rust-build-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+        restore-keys: |
+          ${{ runner.os }}-rust-build-${{ hashFiles('**/Cargo.lock') }}-
+          ${{ runner.os }}-rust-build-
